@@ -1,46 +1,17 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    HttpException,
-    HttpStatus,
-    Inject,
-    Param,
-    ParseIntPipe,
-    Post,
-    Put, Scope,
-} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put} from '@nestjs/common';
 import {SongsService} from "./songs.service";
 import {CreateSongDTO} from "./dtos/create-song.dto";
-import {Connection} from "../common/constants/connection";
 
-@Controller(
-    {path: 'songs', scope: Scope.DEFAULT}
-)
+@Controller('songs')
 export class SongsController {
 
-    constructor(private readonly songsService: SongsService,
-                @Inject('CONNECTION') private connection: Connection) {
-        console.log(`This is connection string : ${this.connection.CONNECTION_STRING}`);
-    }
+    constructor(private readonly songsService: SongsService) {}
 
     @Post()
-    async create(@Body() createSongDTO: CreateSongDTO) {
-        try {
-            // save the song to the DB
-            this.songsService.create(createSongDTO);
-            console.log(`[💚] 🎷 🎉 🥗 Song Created Successfully 🥗 🎉 🎷\n "${createSongDTO.title}" from "${createSongDTO.artists[0]} ${createSongDTO.artists.length > 1 ? `and ${createSongDTO.artists.slice(1).join(' ' + 'and ')} ` : ''}`);
-            return {
-                message: '[💚] 🎷 🎉 🥗 Song Created Successfully 🥗 🎉 🎷',
-                createSongDTO
-            };
-        } catch (error) {
-            throw new HttpException(`Error in song controller - create, error:
-${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    create(@Body() createSongDTO: CreateSongDTO) {
+        // save the song to the DB
+        return this.songsService.create(createSongDTO)
     }
-
     @Get()
     findAll(){
         // Fetch the songs from the DB
