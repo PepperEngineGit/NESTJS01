@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 
 @Injectable()
 export class SongsService {
@@ -8,7 +8,11 @@ export class SongsService {
     private readonly songs = [];
 
     create(song) {
-        this.songs.push(song);
+        try {
+            this.songs.push(song);
+        } catch (error) {
+            throw new HttpException('Error in songs service - create', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return this.songs;
     }
 

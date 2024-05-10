@@ -8,10 +8,21 @@ export class SongsController {
     constructor(private readonly songsService: SongsService) {}
 
     @Post()
-    create(@Body() createSongDTO: CreateSongDTO) {
-        // save the song to the DB
-        return this.songsService.create(createSongDTO)
+    async create(@Body() createSongDTO: CreateSongDTO) {
+        try {
+            // save the song to the DB
+            this.songsService.create(createSongDTO);
+            console.log(`[💚] 🎷 🎉 🥗 Song Created Successfully 🥗 🎉 🎷\n "${createSongDTO.title}" from "${createSongDTO.artists[0]} ${createSongDTO.artists.length > 1 ? `and ${createSongDTO.artists.slice(1).join(' ' + 'and ')} ` : ''}`);
+            return {
+                message: '[💚] 🎷 🎉 🥗 Song Created Successfully 🥗 🎉 🎷',
+                createSongDTO
+            };
+        } catch (error) {
+            throw new HttpException(`Error in song controller - create, error:
+${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
     @Get()
     findAll(){
         // Fetch the songs from the DB
